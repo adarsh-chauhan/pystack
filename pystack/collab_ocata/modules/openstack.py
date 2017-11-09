@@ -1,0 +1,221 @@
+import requests, re
+import keystoneclient.v2_0.client as ksclient
+
+token=None
+
+
+def authenticate(user,passw):
+	print('******Debug: IN authenticate_func_in_openstack.py:  ')
+	try:
+		jsondata={"auth":{"identity":{"methods":["password"],"password":{"user":{"name":user,"domain":{"name":"Default"},"password":passw}}}}}
+
+		r=requests.post('http://10.77.183.61:5000/v3/auth/tokens',json=jsondata,headers={"content-Type":'application/json'})
+		global token
+		token=r.headers['X-Subject-Token']
+		auth_response=r.status_code
+		print(token)
+		return(auth_response)
+	except:
+		auth_response=600
+		return(auth_response)
+
+
+def list_images():
+	print('******Debug: IN list_images_func_in_openstack.py:  ')
+	r=requests.get('http://10.77.183.61:9292/v2/images',headers={'X-Auth-Token':token})
+	data=r.json().get('images', None)
+	image_list=[]
+	for i in data:
+		image_name=i['name']
+		image_type=i['disk_format']
+		image_id=i['id']
+		image_list.append((image_name+'.'+image_type,image_id))
+	print(image_list)
+	return(image_list)
+
+
+def check_tenant():
+	print('******Debug: IN check_tenant_func_in_openstack.py:  ')
+	instance_states={0:'NO STATE',1:'RUNNING',3:'PAUSED',4:'SHUTDOWN',6:'CRASH',7:'SUSPENDED'}
+
+	r=requests.get('http://10.77.183.61:8774/v2.1/servers',headers={'X-Auth-Token':token})
+	servers=r.json().get('servers')
+	if len(servers)== 0:
+		return None
+	else:
+		for i in servers:
+			instance_name=i.get('name','ERROR')
+			instance_id=i.get('id','ERROR')
+
+		instance_url='http://10.77.183.61:8774/v2.1/servers/'+instance_id
+		x = requests.get(instance_url,headers={'X-Auth-Token':token})
+		instance_meta={}
+
+		instance_meta['powerstate']=instance_states[x.json().get('server').get("OS-EXT-STS:power_state",'ERROR')]
+		instance_meta['taskstate']=x.json().get('server').get("OS-EXT-STS:task_state",'ERROR')
+		instance_meta['vmstate']=x.json().get('server').get("OS-EXT-STS:vm_state", "ERROR")
+		instance_meta['ostate']=x.json().get('server').get("status","ERROR")
+		instance_meta['name']=instance_name
+		instance_meta['id']=instance_id
+		print('RETURNING ',instance_meta)
+		return	instance_meta
+
+
+def delete_instance():
+	print('******Debug: IN delete_instance_func_in_openstack.py:  ')
+	server=check_tenant()
+	if server == None:
+		return(["""<div class="alert alert-warning">Error: No Instance to delete</div>""",])
+	else:
+		instance_id=server['id']
+		instance_url='http://10.77.183.61:8774/v2.1/servers/'+instance_id
+		r=requests.delete(instance_url,headers={'X-Auth-Token':token})
+		return(["""<div class="alert alert-success">Info: Instance Deleted</div>""",])
+
+
+def get_console():
+	print('******Debug: IN get_console_func_in_openstack.py:  ')
+	server=check_tenant()
+	if server == None:
+		return(["""<div class="alert alert-warning">Error: No Instance Found</div>""",])
+	else:
+		instance_url="http://10.77.183.61:8774/v2.1/servers/{0}/action".format(server['id'])
+		jsondata={"os-getVNCConsole":{"type": "novnc"}}
+		r=requests.post(instance_url,headers={'X-Auth-Token':token},json=jsondata)
+		instance_url=r.json().get('console').get('url')
+		print(instance_url)
+		return instance_url
+
+def instance_off():
+	server=check_tenant()
+	if server == None:
+		return(["""<div class="alert alert-warning">Error: No Instance to Power Off</div>""",])
+	else:
+		instance_id=server['id']
+		instance_url='http://10.77.183.61:8774/v2.1/servers/' + instance_id + '/action'
+		jsondata='{"os-stop" : null}'
+		r=requests.post(instance_url,headers={'X-Auth-Token':token},data=jsondata)
+		print(r.text)
+		return(["""<div class="alert alert-success">Info: Instance Powerd Off</div>""",])
+		
+
+def instance_on():
+	server=check_tenant()
+	if server == None:
+		return(["""<div class="alert alert-warning">Error: No Instance to Power on</div>""",])
+	else:
+		instance_id=server['id']
+		instance_url='http://10.77.183.61:8774/v2.1/servers/' + instance_id + '/action'
+		jsondata='{"os-start" : null}'
+		r=requests.post(instance_url,headers={'X-Auth-Token':token},data=jsondata)
+		print(r.text)
+		return(["""<div class="alert alert-success">Info: Instance Powerd on</div>""",])
+
+
+def get_networks():
+	print('******Debug: IN get_networks_func_in_openstack.py:  ')
+	r=requests.get('http://10.77.183.61:9696/v2.0/networks',headers={'X-Auth-Token':token})
+	network_list=r.json().get('networks')
+	for i in network_list:
+		if i.get('router:external') == False:
+			network_id=i['id']
+			return network_id
+		else:
+			continue
+
+
+def create_instance(**args):
+	print('******Debug: IN create_instance_func_in_openstack.py:  ')
+	network_id=get_networks()
+	print(network_id)
+	jsondata={"server": {"name": args['instance_name'],"imageRef": args['instance_image'],"flavorRef": args['flavour'],
+			#		"networks": [{"uuid": network_id}],
+					}
+			}
+	print(token)
+	r=requests.post('http://10.77.183.61:8774/v2.1/servers',headers={'content-Type':'application/json', 'X-Auth-Token':token},json=jsondata)
+	if re.match('2[0][012]',str(r.status_code))!= None:
+		response_data=[]
+		response_data.append("""<div style="position:relative !important" class="alert alert-success"><strong>Instance Created Successfully</strong></div>""")
+		print(response_data)
+		return(response_data)
+	else:
+		response_data=[]
+		temp="""<div style="position:relative !important" class="alert alert-danger"><strong>Something went wrong! :</strong> {0}</div>""".format(r.text)
+		response_data.append(temp)
+		return(response_data)
+
+
+
+
+def create_user(username,password,EmailID):
+
+    print("****** Debug: in create_user function in filename openstack.py")
+    try:
+        usr = username
+        pwd = password
+        eid = EmailID
+        authenticate('vasolank','vasolank@123')
+        endpoint = 'http://10.77.183.61:35357/v2.0'
+        keystone = ksclient.Client(endpoint=endpoint, token=token)
+        tenant = usr + "_project"
+        role = usr + "_role"
+        ten_res = manage_exception_tenant(tenant)
+        if (ten_res):
+            role_res = manage_exception_roles(role)
+            if (role_res):
+                keystone.tenants.create(tenant_name=tenant, description=usr + " tenant", enabled=True)
+                keystone.roles.create(role)
+                keystone.users.create(name=usr, password=pwd, email=eid)
+                success = '''<div class="alert alert-success text-center">Sign Up Successful!</div>'''
+                return success
+
+            else:
+                error_role = '''<div class="alert alert-warning text-center">This username is already taken, please use a different username</div>'''
+                return error_role
+        else:
+            error_tenant = '''<div class="alert alert-warning text-center">This username is already taken, please use a different username</div>'''
+            return error_tenant
+    except:
+        fail = '''<div class="alert alert-warning text-center">Something went Wrong!</div>'''
+        return fail
+
+
+
+def manage_exception_tenant(arg_ten):
+	print("****** Debug: in manage_exception_tenant function in filename openstack.py")
+	endpoint = "http://10.77.183.61:35357/v2.0"
+	keystone = ksclient.Client(endpoint=endpoint, token=token)
+	all_tenant = keystone.tenants.list()
+	tenant_list=[]
+	for i in all_tenant:
+		tenant_name =i.name
+		tenant_list.append(tenant_name)
+	if arg_ten in tenant_list:
+		return False
+	else:
+		return True
+
+		
+def manage_exception_roles(arg_role):
+	print("****** Debug: in manage_exception_roles function in filename openstack.py")
+	endpoint = "http://10.77.183.61:35357/v2.0"
+	keystone =ksclient.Client(endpoint=endpoint,token=token)
+	all_roles = keystone.roles.list()
+	role_list=[]
+	for i in all_roles:
+		role_name = i.name
+		role_list.append(role_name)
+	if arg_role in role_list:
+		return False
+	else:
+		return True
+
+		
+def validate_email(email_id):
+    print("****** Debug: in  validate_email function in filename openstack.py")
+    match = re.search(r"(^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9]+\.[a-zA-Z0-9.]*\.*[com|org|edu]{3}$)", email_id)
+    if match:
+        return True
+    else:
+        return False

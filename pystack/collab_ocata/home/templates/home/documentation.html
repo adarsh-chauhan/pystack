@@ -1,0 +1,89 @@
+{% extends 'home/frame.html' %}
+
+{% block content %}
+
+<table border="0" height="90%" width="90%" style="top:7%; left:2%; position:fixed;">
+<tr>
+<td width="20%" style="position:fixed; top:30%">
+<nav>
+<ul><a href="#1">Openstack Architecture</a></ul>
+<ul><a href="#2">Insatlling Openstack</a></ul>
+<ul><a href="#3">Using Django</a></ul>
+<ul><a href="#4">Using Requests</a></ul>
+<ul><a href="#5">Authentication API Flow</a></ul>
+</nav>
+</td>
+
+<td width="70%" height="90%" style="position:fixed; top:10%; left:25%; overflow:scroll" >
+<div>
+
+<div id="1">
+<div class="card" style="width: 60rem;">
+  <img class="card-img-top" src="static/home/doc_openstack_arch.jpg" alt="Card image cap">
+  <div class="card-block">
+	<hr>
+    <h4 class="card-title">Architecture Overview</h4>
+    <p class="card-text">Openstack components and there interactions</p>
+   <a target="_blank" href="https://docs.openstack.org/arch-design/design.html" class="btn btn-primary">Know more</a>
+  </div>
+</div>
+<div>
+
+<br>
+
+<div id="2"
+<div class="card" style="width: 60rem;">
+  <div class="card-block">
+    <h4 class="card-title">Installing Openstack (all in one)</h4>
+    <p class="card-text">Openstack (pike) has been instlled on top of a CENTOS 7 with the help of packstack </p>
+   <a target="_blank" href="https://www.rdoproject.org/install/packstack/" class="btn btn-primary">Know more</a>
+  </div>
+</div>
+<div>
+
+<br>
+
+<div id="3">
+<div class="card" style="width: 60rem;">
+  <div class="card-block">
+    <h4 class="card-title">Installing Django</h4>
+    <p class="card-text">Django has been installed on top of Ubuntu 14.04 server with the help of PIP3</p>
+   <a target="_blank" href="https://docs.djangoproject.com/en/1.11/topics/install/" class="btn btn-primary">Know more</a>
+  </div>
+</div>
+<div>
+
+<br>
+
+<div id="4">
+<div class="card" style="width: 60rem;">
+  <div class="card-block">
+    <h4 class="card-title">Requests library</h4>
+    <p class="card-text">Requests library has been used to make API calls to Openstack server </p>
+   <a target="_blank" href="http://docs.python-requests.org/en/master/user/quickstart/" class="btn btn-primary">Know more</a>
+  </div>
+</div>
+<div>
+
+<br>
+
+<div id="5">
+<div class="card" style="width: 60rem;">
+  <img class="card-img-top" src="static/home/doc_api_flow.jpg" alt="Card image cap">
+  <div class="card-block">
+	<hr>
+    <h4 class="card-title">API Authentication Flow</h4>
+    <p class="card-text">In order to send any API request a token has to be generated which has to be sent in subsequent API calls/requests</p>
+   <a target="_blank" href="authentication-and-api-request-workflow" class="btn btn-primary">Know more</a>
+  </div>
+</div>
+<div>
+
+
+
+
+</div>
+</td>
+</tr>
+</table>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% extends 'home/frame.html' %}
+
+{% block content %}
+
+<html>
+<head>
+  <meta http-equiv="content-type"
+ content="text/html; charset=ISO-8859-1">
+  <title>sign UP django</title>
+</head>
+<body>
+<div class="jumbotron" style="width:35%; margin:1% 1%;background-color:transparent !important">
+<h1 class="display-3">PyStack</h1>
+<p class="lead"> PyStack is a Proof of Concept (POC) which explores different dimensions of Openstack-ocata through REST API</p>
+<hr class="my-4"></hr>
+<p> <a href="signup.html">Sign Up</a> and fire up your server to get an experience of our flavour of IAAS
+</p>
+<form method="post" src="/signup.html">
+    {% csrf_token %}
+  <span style="font-family: monospace;"></span>
+  <table style="text-align: left; width: 1242px; height: 150px;"
+ border="0" cellpadding="2" cellspacing="2">
+    <tbody>
+      <tr>
+        <td
+ style="width: 208px; font-family: Calibri; font-weight: bold;">Username</td>
+        <td style="width: 1014px;"><span
+ style="font-family: monospace;"><input type="text" name="usernametextbox"></span></td>
+      </tr>
+      <tr>
+        <td
+ style="width: 208px; font-family: Calibri; font-weight: bold;">Password</td>
+        <td style="width: 1014px;"><input name="userpassword" type="password"></td>
+      </tr>
+      <tr>
+        <td
+ style="width: 208px; font-family: Calibri; font-weight: bold;">Confirm
+Password</td>
+        <td style="width: 1014px;"><input name="confirmpassword" type="password"></td>
+      </tr>
+      <tr>
+        <td style="width: 208px; font-family: Calibri; font-weight: bold;">Enter your Email Address</td>
+        <td style="width: 1014px;"><span
+ style="font-family: monospace;"><input type="text" name="EmailID"></span></td>
+      </tr>
+      <tr>
+        <td style="width: 208px;"></td>
+        <td style="width: 1014px;"><input
+ value="Sign Up Now" name="SignUp" type="submit" class ="btn btn-primary" ></td>
+      </tr>
+    </tbody>
+  </table>
+  <span style="font-family: monospace;">&nbsp;</span><br>
+  <br>
+&nbsp;<br>
+  <br>
+</form>
+</body>
+</html>
+
+
+{% endblock %}
+
+

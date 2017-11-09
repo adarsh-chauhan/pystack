@@ -1,0 +1,118 @@
+{% extends 'home/frame.html' %}
+
+{% block content %}
+
+<style>
+.col-container {
+    display: table;
+    width: 100%;
+}
+.col {
+    display: table-cell;
+    padding: 16px;
+}
+
+.card {
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+  max-width: 300px;
+  margin: auto;
+  text-align: center;
+  font-family: arial;
+  margin-top: 80px;
+  margin-right : 30px;
+
+
+}
+
+.title {
+  color: grey;
+  font-size: 18px;
+}
+
+button {
+  border: none;
+  outline: 0;
+  display: inline-block;
+  padding: 8px;
+  color: white;
+  background-color: #000;
+  text-align: center;
+  cursor: pointer;
+  width: 100%;
+  font-size: 18px;
+}
+
+
+
+button:hover, a:hover {
+  opacity: 0.7;
+}
+
+.container {
+  display: flex;
+}
+.container > div {
+  flex: 1; /*grow*/
+}
+.centered {
+    margin: 0 auto;
+    text-align: left;
+    width: 800px;
+}
+
+
+</style>
+
+    <div class="centered">
+<div class="container">
+    <div >
+<div class="card">
+  <img src="static/home/adarsh1.jpg" alt="Adarsh Chauhan" style="width:100%">
+    <button>Adarsh Chauhan</button>
+  <p class="title">Head Developer</p>
+  <p>Cisco TAC</p>
+  <div style="margin: 4px 0;">
+      <a href="mailto:adarshchauhan@hotmail.com?subject=PyStack.com&body=Hi Adarsh,"><i class="fa fa-google"></i></a>
+      <a href="https://www.linkedin.com/in/adarshchauhan/" target="_blank" ><i class="fa fa-linkedin"></i></a>
+      <a href="https://www.facebook.com/getadarshchauhan" target="_blank"><i class="fa fa-facebook"></i></a>
+
+ </div>
+<p><button i class="fa fa-envelope" onclick="location.href='mailto:Adarsh2.Chauhan@aricent.com?subject=PyStack.com&body=Hi Adarsh,'"></button></p>
+</div>
+    </div>
+
+    <div>
+<div class="card">
+  <img src="static/home/vaibhav1.jpg" alt="Vaibhav Solanki" style="width:100%">
+    <h3><button>Vaibhav Solanki</button></h3>
+  <p class="title">Developer</p>
+  <p>Cisco TAC</p>
+  <div style="margin: 4px 0;">
+      <a href="mailto:sancuriousvaibhav@gmail.com?subject=PyStack.com&body=Hi Vaibhav,"><i class="fa fa-google"></i></a>
+     <a href="https://www.linkedin.com/in/vaibhav-solanki-44b6a737/" target="_blank" ><i class="fa fa-linkedin"></i></a>
+      <a href="https://www.facebook.com/sancuriousvaibhav" target="_blank"><i class="fa fa-facebook"></i></a>
+ </div>
+<p><button i class="fa fa-envelope" onclick="location.href='mailto:vaibhav.solanki@aricent.com?subject=PyStack.com&body=Hi Vaibhav,'"></button></p>
+</div>
+    </div>
+
+    <div>
+<div class="card">
+  <img src="static/home/vinav1.jpg" alt="Vinav Tiwari" style="width:100%">
+    <h3><button>Vinav Tiwari</button></h3>
+  <p class="title">Developer</p>
+  <p>Cisco TAC</p>
+  <div style="margin: 4px 0;">
+    <a href="mailto:vinavtiwari@gmail.com?subject=PyStack.com&body=Hi Vinav,"><i class="fa fa-google"></i></a>
+    <a href="#"><i class="fa fa-linkedin" Title="user not available"></i></a>
+      <a href="https://www.facebook.com/vinav.tiwari" target="_blank"><i class="fa fa-facebook"></i></a>
+
+ </div>
+<p><button i class="fa fa-envelope" onclick="location.href='mailto:vinav.tiwari@aricent.com?subject=PyStack.com&body=Hi Vinav,'"></button></p>
+</div>
+    </div>
+</div>
+    </div>
+
+
+{% endblock %}
